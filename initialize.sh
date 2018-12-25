@@ -5,3 +5,5 @@ source ~/.bashrc
 conda update conda
 conda install pip
 conda install virtualenv
+
+pip install -r requirements.txt
