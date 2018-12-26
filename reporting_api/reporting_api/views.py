@@ -20,7 +20,10 @@ def parse_dt_string(dt_string):
 def get_time_ranges(start, end, time_interval):
     '''
     get_time_ranges() - returns a list of datetime objects containing the
-    beginning and end of all time intervals that span start to end
+    beginning and end of all time intervals that span start to end.  the last
+    datetime object in the list is always set to the end value to ensure that
+    only time intervals that occur betweent the start and end values will be
+    evaluated.
     '''
     start = parse_dt_string(start)
     end = parse_dt_string(end)
@@ -134,7 +137,7 @@ def lcp_report(business_id, time_interval, start, end):
             labor = labor_entries.copy()
             labor_cost = calculate_labor_cost(labor, time_frame)
 
-            data_n['value'] = round(labor_cost/sales, 2)
+            data_n['value'] = round(100*labor_cost/sales, 2)
         else:
             data_n['value'] = 'Error: No sales made in this time inverval'
 
@@ -167,9 +170,13 @@ def fcp_report(business_id, time_interval, start, end):
             'end': time_ranges[n+1]
         }
 
-        data_n = {
+        timeFrame = {
             'start': time_frame['start'].strftime(dt_format),
             'end': time_frame['end'].strftime(dt_format)
+        }
+
+        data_n = {
+            'timeFrame': timeFrame
         }
 
         dt_mask_a = checks['closed_at'] > time_frame['start']
@@ -180,13 +187,14 @@ def fcp_report(business_id, time_interval, start, end):
         if check_ids:
             check_mask = ordered_items['check_id'].isin(check_ids)
             void_mask = ordered_items['voided'] == False
-            price = float(ordered_items[check_mask & void_mask]['price'].sum())
+            items = ordered_items[check_mask & void_mask]
+            price = float(items['price'].sum())
             if price == 0:
                 data_n['value'] = 'Error: Total price is zero in this time inverval'
                 data.append(data_n)
                 continue
 
-            cost = float(ordered_items[check_mask]['cost'].sum())
+            cost = float(items['cost'].sum())
 
             data_n['value'] = round(100*cost/price, 2)
         else:
@@ -253,6 +261,13 @@ def egs_report(business_id, time_interval, start, end):
     return response
 
 def reporting(request):
+    '''
+    reporting() - this is the main view function used for the /reporting end
+    point.  this function checks the request to ensure that a report type,
+    business id, time interval, start date time, and end date time is provided.
+    depending on the report type, either lcp_report(), fcp_report(), or
+    egs_report() will be called.
+    '''
     if 'report' in request.GET:
         report = request.GET['report']
         report_types = ['lcp', 'fcp', 'egs']
@@ -304,5 +319,9 @@ def reporting(request):
     return JsonResponse(response, json_dumps_params=json_dumps_params)
 
 def welcome(request):
+    '''
+    welcome() - this function is simply used to inform the user that the only
+    informative end point is /reporting.
+    '''
     s = 'Welcome.  Go to the /reporting end point to view the api.'
     return HttpResponse(s)

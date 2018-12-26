@@ -39,9 +39,19 @@ Per the instructions, the data from the POS APIs was written to flat csv files. 
 
 
 ## Report Types
+There are three report types available for this API - Labor Cost Percentage, Food Cost Percentage, and Employee Gross Sales, each of which is discussed in more detail in the following sections.  All three report types require business_id, start date time, end date time, and time interval in the url request.  For a given business_id, all three report types provide a different metrics across N time intervals that span the start date time and the end date time.  I've structured all three APIs such that the last time interval always ends with the end date time, even if that results in the last time interval spanning a shorter time increment than the rest.
+
+All three reports use the Checks model/table.  In order to determine the relevant checks for a given time interval, only the checks that are closed during the time interval of interest are examined.  
+
+Note - The values returned for LCP and FCP are percentages.
 
 ### Labor Cost Percentage (LCP)
+For a given time interval, the LCP is the ratio of labor cost to revenue.  In addition to the Checks table, the LCP requires the OrderedItems and LaborEntries tables.  OrderedItems are related to the Checks table via the 'check_id' column.  By finding the check ids that closed during a given time interval, the un-voided ordered items tied to the relevant check ids can be examined, and the revenue they provide can be summed up.  Each labor entry record has a clock in and clock out field.  The LaborEntries table is then filtered on business id, clock in, and clock out to determine which records are applicable to the time interval of interest.  Once the appropriate LaborEntries records are determined, the labor cost can be calculated with the product of hours worked and hourly rate.  
 
 ### Food Cost Percentage (FCP)
+The FCP is the ratio of the amount charged for food items (price) to the amount it costs to make (cost).  I wasn't exactly sure how to calculate this metric given the time interval constraints.  Also, the example given in the instructions only provides a value for each time increment and doesn't itemize the menu items.  So, the API created returns the FCP ratio of all the items sold by a given business during the time interval of interest.  
+
+Similar to LCP, the first step is to isolate the check ids that closed during each time interval of interest.  From there, the ordered items for each check can be determined.  The voided ordered items are filtered out, and the price and cost are summed for all the ordered items sold during the given time interval and the FCP ratio is determined from there.
 
 ### Employee Gross Sales (EGS)
+EGS is the sum of price charged for all items sold by a given employee during a given time interval.  Unlike LCP and FCP, the data returned by the EGS report is itemized by employee name.  This is achieved by filtering the Checks for the time interval of interest, then joining the filtered Checks model and OrderedItems model on the 'check id' field.  Once the two tables have been joined, they can be grouped by employee name and the price of all items sold can be summed.  This produces an EGS value for each employee that worked during the time interval of interest.
