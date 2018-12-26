@@ -29,7 +29,6 @@ These setup instructions are designed for a UNIX like terminal.  Following these
   5.  Run initialize_2.sh script.  Running initialize_1.sh leaves you in the root directory, so you will need to change directories back into the avero_assessment repo before running initialize_2.sh.  initialize_2.sh activates a virtual environment, installs necessary packages, and changes directories into the main Django project - avero_assessment/reporting_api.
 
     - change directories to the avero_assessment repo
-
     - . initialize_2.sh
 
 
