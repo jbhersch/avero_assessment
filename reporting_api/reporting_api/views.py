@@ -37,6 +37,8 @@ def get_time_ranges(start, end, time_interval):
         time_ranges.append(time_ranges[-1] + time_delta)
     if time_ranges[-1] < end:
         time_ranges.append(end)
+    elif time_ranges[-1] > end:
+        time_ranges[-1] = end
 
     return time_ranges
 
@@ -71,6 +73,7 @@ def calculate_labor_cost(labor, time_frame):
         calculate_hours_worked(clock_in, clock_out, start, end)
         for clock_in, clock_out, start, end in zip_columns
     ]
+    labor = labor[labor['hours_worked'] > 0]
     labor_cost = (labor['hours_worked']*labor['pay_rate']).sum()
 
     return labor_cost
@@ -81,10 +84,10 @@ def lcp_report(business_id, time_interval, start, end):
     Labor Cost Percentage (LCP) request
     '''
 
-    time_interval = 'hour'
-    business_id = 'f21c2579-b95e-4a5b-aead-a3cf9d60d43b'
-    start = '2018-07-15T15:00:00.000Z'
-    end = '2018-07-15T18:00:00.000Z'
+    # time_interval = 'hour'
+    # business_id = 'f21c2579-b95e-4a5b-aead-a3cf9d60d43b'
+    # start = '2018-07-15T15:00:00.000Z'
+    # end = '2018-07-15T18:00:00.000Z'
 
     response = {
         'report': 'LCP',
@@ -128,9 +131,7 @@ def lcp_report(business_id, time_interval, start, end):
                 data.append(data_n)
                 continue
 
-            clock_in_mask = labor_entries['clock_in'] <= time_frame['start']
-            clock_out_mask = labor_entries['clock_out'] >= time_frame['end']
-            labor = labor_entries[clock_in_mask & clock_out_mask].copy()
+            labor = labor_entries.copy()
             labor_cost = calculate_labor_cost(labor, time_frame)
 
             data_n['value'] = round(labor_cost/sales, 2)
@@ -301,3 +302,7 @@ def reporting(request):
 
     json_dumps_params = {'indent':4}
     return JsonResponse(response, json_dumps_params=json_dumps_params)
+
+def welcome(request):
+    s = 'Welcome.  Go to the /reporting end point to view the api.'
+    return HttpResponse(s)

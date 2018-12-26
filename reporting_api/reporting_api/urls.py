@@ -19,5 +19,6 @@ import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^reporting', views.reporting)
+    url(r'^reporting', views.reporting),
+    url(r'', views.welcome)
 ]

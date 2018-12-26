@@ -28,7 +28,7 @@ for uri in uris:
     url = os.path.join(base_url, uri) # set end point url
     csv_path = os.path.join(data_dirpath, uri + '.csv') # path for end point
 
-    # records will be extracte from each table in chunks of 500
+    # records will be extracted from each table in chunks of 500
     # which is the maximum quantity set on the limit parameter
     params = {'limit': '500'}
     response = requests.get(url, headers=headers, params=params).json()
