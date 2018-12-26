@@ -39,8 +39,10 @@ These setup instructions are designed for a UNIX like terminal.  Following these
     - python manage.py runserver
 
   However, if this is being run from an EC2 instance for example, where the instance has a public ip address of ###.##.##.##, then the API can be accessed at 'http://ec2-###-##-##-##.compute-1.amazonaws.com:8000/' by typing the following into the terminal
-  
+
     - python manage.py runserver ec2-###-##-##-##.compute-1.amazonaws.com:8000
+
+  The argument following runserver will vary depending on where the application is being run from.
 
 
 ## POS API Data Retrieval
