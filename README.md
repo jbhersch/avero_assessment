@@ -18,7 +18,6 @@ These setup instructions are designed for a UNIX like terminal.  Following these
   3.  Change permissions on initialization scripts
 
     - chmod +x initialize_1.sh
-
     - chmod +x initialize_2.sh
 
 
