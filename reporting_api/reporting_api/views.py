@@ -308,12 +308,15 @@ def reporting(request):
         response = {'Error': 'End not specified in request'}
         return JsonResponse(response)
 
-    if report == 'lcp':
-        response = lcp_report(business_id, time_interval, start, end)
-    elif report == 'fcp':
-        response = fcp_report(business_id, time_interval, start, end)
-    elif report == 'egs':
-        response = egs_report(business_id, time_interval, start, end)
+    try:
+        if report == 'lcp':
+            response = lcp_report(business_id, time_interval, start, end)
+        elif report == 'fcp':
+            response = fcp_report(business_id, time_interval, start, end)
+        elif report == 'egs':
+            response = egs_report(business_id, time_interval, start, end)
+    except:
+        response = {'Error': 'Unspecified error occured, please try different parameters in the request'}
 
     json_dumps_params = {'indent':4}
     return JsonResponse(response, json_dumps_params=json_dumps_params)
