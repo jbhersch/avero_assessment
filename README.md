@@ -48,7 +48,7 @@ Per the instructions, the data from the POS APIs was written to flat csv files. 
 
 
 ## Report Types
-There are three report types available for this API - Labor Cost Percentage, Food Cost Percentage, and Employee Gross Sales, each of which is discussed in more detail in the following sections.  All three report types require business_id, start date time, end date time, and time interval in the url request.  For a given business_id, all three report types provide a different metrics across N time intervals that span the start date time and the end date time.  I've structured all three APIs such that the last time interval always ends with the end date time, even if that results in the last time interval spanning a shorter time increment than the rest.
+There are three report types available for this API - Labor Cost Percentage, Food Cost Percentage, and Employee Gross Sales, each of which is discussed in more detail in the following sections.  All three report types require business_id, start date time, end date time, and time interval in the url request.  For a given business_id, all three report types provide different metrics across N time intervals that span the start date time and the end date time.  I've structured all three APIs such that the last time interval always ends with the end date time, even if that results in the last time interval spanning a shorter time increment than the rest.
 
 All three reports use the Checks model/table.  In order to determine the relevant checks for a given time interval, only the checks that are closed during the time interval of interest are examined.  
 
